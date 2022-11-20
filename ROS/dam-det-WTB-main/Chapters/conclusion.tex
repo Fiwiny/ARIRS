@@ -1,0 +1,48 @@
+\label{conclusions}
+\section{Conclusions}
+In this work, a new technique for WTG blade damage classification using Deep Neural Networks has been studied and implemented. Although Siamese Neural Networks have already been used for \emph{few-shot learning} problems like handwritten character recognition, they have not been used to address problems in this field, which, after reviewing the literature, is characterised by a lack of labelled data and a grate class imbalance.
+
+Firstly, a complete overview of the different developed techniques for damage classification and detection was undertaken, concluding that the major challenges to be addressed in the field are the scarcity of available annotated data and the need to detect different types of damages combined with the scarcity of examples of the most severe types of damage. Then, a dataset consisting of the annotated regions of images was collected. After this, it was noticed that a very limited and highly unbalanced dataset was available. Therefore, it was decided to approach the problem as a \emph{few-shot learning} scenario, in which predictions given only few or a single example of each class must be correctly made. For this purpose, a Siamese Neural Network based on the pre-trained network Inception Resnet (V1) has been implemented. In addition, to try to improve the performance of the model, other techniques such as data augmentation have been applied, together with a minor pre-processing of the images. 
+
+After training the model, the inference score on the test set was 0.94 overall accuracy. When comparing the result between the Siamese architecture and a classic Convolutional Neural Network, it can be seen that the Siamese based approach (using the same experiment conditions: same dataset, same data augmentation) reaches significantly higher metric values. Specifically, improving 0.13 points in accuracy (from 0.81 to 0.94), 0.16 in recall (0.76 vs. 0.92), 0.17 in f1-score (0.76 vs. 0.93) and 0.19 points in precision (from 0.76 to 0.95) which even reaches a 1.00 in some classes.
+
+Therefore, it can be concluded that in a data scarcity context, training a model to learn to decide whether or not two images belong to the same class, instead of training it to learn how to classify the different images in the considered classes, can significantly improve its performance.
+
+On the other hand, the main drawback encountered during the development of the project is, as mentioned so many times, the low number of samples available. This lack limits the classification ability, and much more the object detection capacity, which is the main goal of the WTG blade damage detection, and has deviated the objective of this work leaving the detection part for a future work. Besides, the large computational capacity required to process such big batches made of pairs instead of single images, as well as the high execution time required compute so many iterations in contrast to the low number of available samples, have also been issues to overcome.
+
+
+\section{Future Lines}
+
+As a result of the present development, several future lines of work are proposed. 
+
+Firstly, it would be necessary to create a process of acquisition and annotation of the pictures taken for maintenance purposes. On the one hand, this would improve the available databases, making them grow in number and diversity of samples, which would result in more robust algorithms. On the other hand, it would allow standardizing the image annotation process, making it more robust and with higher quality, since it is a manual process.
+
+Another great aspect to deal with would be the classification of all types of damages present on the blades. Although this project have been focused on the classification of the three most important ones based on their criticality, the ideal would be to detect the highest possible number of types, in order to offer the best diagnosis of the condition of the blades.
+
+Finally, a clear line of future work would be working on the object detection task. As object detectors are divided into region proposal and classification stages, a good way could be to use a region proposal network such as the R-CNN one, followed by the model proposed in this work as a classifier, in view of the good results obtained.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

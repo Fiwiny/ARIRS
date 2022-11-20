@@ -1,0 +1,75 @@
+%% INTRODUCTION TEXT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\label{chapter:introduction}
+
+\section{Motivation}
+\label{sec:motivation}
+Renewable energies are clean, endless and increasingly competitive sources of energy. They differ from fossil fuels mainly because of their diversity, abundance and potential for being used anywhere on the planet, but above all, they do not produce greenhouse gases, one of the main causes of climate change, or polluting emissions. Moreover, their costs are falling steadily, while the general trend in the cost of fossil fuels is the opposite, regardless of their cyclical volatility.
+
+The growth of renewable energies is unstoppable, as reflected in the statistics provided annually by the International Energy Agency (IEA). According to IEA forecasts, the share of renewables in the global electricity supply will increase from 26\% in 2018 to 44\% in 2040, and they will provide 2/3 of the increase in electricity demand recorded in that period, mainly through wind and photovoltaic technologies, which are the two most widely spread. 
+
+In particular, wind energy has been growing unstoppably in recent years, as numerous large companies are investing on this type of energy, and new onshore and offshore installations are being built at an increasing rate every year. In recent years, new installed capacity has grown significantly, being 2020 a record year for onshore technology with 95.3 GW installed, followed closely by 2021, as can be seen in Figure \ref{fig:new_inst_evol}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=0.85\textwidth]{Images/new_inst_evol.png}
+        \caption[New wind power capacity installed globally by year \cite{windrepor2022}.]
+        {\small New wind power capacity installed globally by year \cite{windrepor2022}.} 
+        \label{fig:new_inst_evol}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The optimal exploitation of all this installed capacity in recent years requires proper maintenance of the assets, the unavailability of which (\emph{i.e.} the disability of the wind turbines to produce energy) entails enormous economic losses. Repairs in the large components of wind turbines often involve the use of cranes and the stoppage of wind turbines, which means their unavailability and therefore losses in production. Moreover, the replacement of these large components entails grate economic expenses to replace these large and expensive components. As shown in Figure \ref{fig:wtg_cost}, one of the most costly components to replace (as well as most maintenance-intensive), is the rotor. It is composed of the three blades, which are very large and costly components, and often the failure of one of them means replacing all three at the same time due to weight compensation issues.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=0.85\textwidth]{Images/precio_wtg.png}
+        \caption[Capital Expenditure (CAPEX) for typical onshore wind farm \cite{costrev2020}.]
+        {\small Capital Expenditure (CAPEX) for typical onshore wind farm \cite{costrev2020}.} 
+        \label{fig:wtg_cost}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+As a result, predictive maintenance of the assets turns to be highly necessary, in order to avoid these costs overruns.
+
+Predictive maintenance is a technique which uses data analysis tools and techniques to detect operational anomalies and potential defects in equipment and processes so that they can be addressed before failure occurs. To track the status of the equipments and alert technicians about upcoming failures, predictive maintenance has three main components:
+
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{}Sensors and connected devices installed on the equipments send data about machine status and performance in real time thanks to Internet of Things (IoT) technologies, which enable communication between the equipments and analytics systems.
+    \item[\tiny$\blacksquare$] \textbf{}Software solutions and cloud computing storage allow data mining to be applied and huge amounts of data to be collected and analysed using big data applications. 
+    \item[\tiny$\blacksquare$] \textbf{}Predictive models are fed with the processed data and use machine learning technologies to establish patterns and comparisons, predict failures and schedule maintenance before they occur.
+\end{itemize}
+
+In the case of blades, predictive maintenance is usually performed by means of acoustic sensors, vibration analysis or even infrared thermography. Another way to do it is by taking images of the blades, with robots, drones or even manually with a camera from the ground, which are then checked by human technicians to find damages on them. This is where an opportunity arises to automate this image review work for predictive maintenance of wind turbine blades. Currently, some works have already developed computer vision models to perform this task, but it is still a young field with many drawbacks, this is why this work will try to overcome some of them to be able to implement a robust and reliable product in terms of predictive maintenance of wind turbine blades.
+
+
+\section{Objectives}
+\label{sec:objectives}
+The main objective of this work is the implementation of a model based on Deep Learning which successfully detects damages on the surface of wind turbine blades in order to automate their predictive maintenance. As a result of this main objective, the development of the work has been based on the fulfilment of the following objectives:
+
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{}Conduct a literature review of methods applied so far on similar problems.
+    \item[\tiny$\blacksquare$] \textbf{}Create a database from the available images and manually label it after studying the different tools available and the best practices to perform the annotation. 
+    \item[\tiny$\blacksquare$] \textbf{}Implement a feasible Deep Learning based classification model for the obtained database and make use of different techniques to overcome the difficulties encountered and enhance the results.
+    \item[\tiny$\blacksquare$] \textbf{}Identify possible future work lines to develop in order to achieve a robust and reliable product in terms of predictive maintenance.
+\end{itemize}
+
+\section{Report structure}
+\label{sec:reportStructure}
+
+The report is structured as follows:
+
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{Chapter 1: Introduction.} This chapter describes the motivation and the objectives to be achieved through the development of the work.
+    \item[\tiny$\blacksquare$] \textbf{Chapter 2: State of the Art.} Introduces the state of the art in the field of wind turbine blades damage detection by providing an introduction to Object Recognition, a review of related works, and the challenges to be faced and the current approaches to address them.
+    \item[\tiny$\blacksquare$] \textbf{Chapter 3: Dataset.} This chapter describes the database used.
+    \item[\tiny$\blacksquare$] \textbf{Chapter 4: Proposed Model.} In this chapter, the implemented architecture along with the used Convolutional Neural Network are presented.  
+    \item[\tiny$\blacksquare$] \textbf{Chapter 5: Experiments and Results.} This chapter details the performed experiments, as well as the results obtained using the selected metrics.
+    \item[\tiny$\blacksquare$] \textbf{Chapter 6: General Conclusions and Future Lines.} The last chapter outlines the conclusions extracted from the work and discusses possible lines of future work.
+\end{itemize}
+
+
+

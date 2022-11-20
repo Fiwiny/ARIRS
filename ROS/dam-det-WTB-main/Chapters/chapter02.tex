@@ -1,0 +1,323 @@
+\label{chapter:2}
+
+This chapter describes the process of creating the wind turbine blade damage database on which the model is tested. In total, near 3000 images have been acquired by a robot called TSR used to conduct visual inspections of the wind turbine generator (WTG) blades. On these images, a manual labeling has been performed in order to evaluate the goodness of the model. In addition, the different types of damage present in this dataset are explained, as well as the most relevant ones due to their criticality.
+
+\section{Data acquisition}
+\label{sec:dataAcquisition}
+
+The database consists of a set of images extracted by two robots on nine wind turbines of two different wind farms. To take the images, the robot is attached to the metal surface of the WTG towers by magnets, which allows to obtain a full coverage of the four surfaces of the three wind turbine blades (for which they are required to be still), as shown in Figure \ref{fig:TSR_esq}.
+
+From each WTG, the robot takes arround 25 pictures from each of the 4 blade profiles (leading edge, trailing edge, leedward side and windward side), from each of the 3 blades of the WTG. This amounts to approximately 300 images per turbine. Since 9 WTGs have been photographed, the number of images amounts to 2832. Some examples of the acquired images are shown in Figure \ref{fig:im_ex}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=0.48\textwidth]{Images/tsr_robot.jpg}
+        \caption[TSR robot attached to a WTG tower.]
+        {\small TSR robot attached to a WTG tower.} 
+        \label{fig:TSR_rob}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=\textwidth]{Images/TSR.jpg}
+        \caption[Image acquisition procedure and blade designation.]
+        {\small Image acquisition procedure and blade designation.} 
+        \label{fig:TSR_esq}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=\textwidth]{Images/im_ex.png}
+        \caption[Examples of acquired images.]
+        {\small Examples of acquired images.} 
+        \label{fig:im_ex}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Data annotation}
+\label{sec:dataAnnotation}
+For the annotation of these images, a team of 2 WTG blade experts has been involved. Firstly, different state-of-the-art image annotation tools were evaluated, and the best practices were studied and presented as a guide for the annotators. Then, manual annotation was performed by the technical experts and, finally, a validation of these annotations was performed to ensure that they met the quality criteria required for the project.
+
+For this purpose, the bounding box annotation format has been chosen. Bounding boxes are one of the most commonly used types of image annotation in most computer vision applications, thanks to their versatility and simplicity. Bounding boxes enclose objects and assist the computer vision network in locating the objects of interest. They are simply declared by specifying \emph{X} and \emph{Y} coordinates for the upper left and bottom right corners of the box, or the \emph{X} and \emph{Y} coordinates of the bottom left corner and their width and height.
+
+\subsection{Annotation tools}
+\label{sec:objectDetectionAlgorithms}
+
+Some of the different state-of-the-art image annotation tools evaluated were VGG Image Annotator (VIA), Roboflow Annotate, Computer Vision Annotation Tool (CVAT) and LabelImg.
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{VIA} is a web interface and open source project based solely on HTML, Javascript and CSS, and has no dependency on external libraries. It is quite simple and has an easy user interface, and it is the most widely used in the consulted literature \cite{via}.
+    \item[\tiny$\blacksquare$] \textbf{Roboflow Annotate} has also web interface, but, altough is has a free plan, it is not open source. It counts with semi-manual model assisted labeling which only requires human review, and is also able to perform data augmentation or image preprocessing if needed \cite{roboflow}. 
+    \item[\tiny$\blacksquare$] \textbf{CVAT} is a web interface and open source tool which also has automatic annotation which requires human review. The downside would be the complicated UI, which may need several days to master \cite{cvat}.
+    \item[\tiny$\blacksquare$] \textbf{LabelImg} is also web interface and open source \cite{lablimg}.
+\end{itemize}
+
+Finally, the selected tool to perform the annotation was VGG Image Annotator, since it meets all the requirements for the project, it is open source, and its user interface is rather fast to learn for people with no experience in image annotation. It is only necessary loading the images, drawing the bounding boxes and choosing the type of defect contained in them. Figure \ref{fig:via_ex} shows an example of image annotation using this tool.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=\textwidth]{Images/via_ex.png}
+        \caption[Image annotation tool VIA.]
+        {\small Image annotation tool VIA.} 
+        \label{fig:via_ex}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Annotation Best Practices}
+\label{sec:bestpractices}
+Regarding the annotation, there are a number of best practices to be followed by annotators to ensure that the dataset has the highest possible quality for a computer vision algorithm.
+
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{}Every object of interest in every image must be annotated, otherwise, false negatives will be included in the ground truth.
+    \item[\tiny$\blacksquare$] \textbf{}It is important to cover the entirety of an object with each bounding box. 
+    \item[\tiny$\blacksquare$] \textbf{}Occluded objects should be also labeled.
+    \item[\tiny$\blacksquare$] \textbf{}Creating tight bounding boxes will help the model know which pixels constitute an object of interest and which are irrelevant portions of an image.
+    \item[\tiny$\blacksquare$] \textbf{}It is better to determine as many specific classes as possible, because if later the number of classes changes, it is easier to group specific classes than to ungroup general ones.
+    \item[\tiny$\blacksquare$] \textbf{}Null examples, \emph{i.e.} with no defects on them, are needed, but not too many as the model will learn to never predict anything.
+    \item[\tiny$\blacksquare$] \textbf{}Images with examples of multiple classes in them are also needed.
+    \item[\tiny$\blacksquare$] \textbf{}Regarding the annotators, having clear, shareable, and repeatable labeling instructions is essential to create and maintain high quality and consistent datasets.
+\end{itemize}
+
+
+\section{Classes and distribution}
+\label{sec:classDistribution}
+
+There are 16 possible damage categories which are of potential interest. Table \ref{tab:dam_cat} shows the name and code of each of them. However, not all of them have been found in the dataset. Figure \ref{fig:dam_ex} shows examples of those defects that are actually present in the acquired database.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb!]
+\centering    
+\caption{Damage type cathegories.}
+\label{tab:dam_cat}
+\begin{tabular}{lccp{10cm}}
+\hline\noalign{\smallskip}
+\textbf{Code} & \textbf{Damage Name}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\parbox{3cm}{D-2} & Leading Edge Erosion}\\
+\parbox{3cm}{D-3} & Lightning Strike Damage}\\
+\parbox{3cm}{D-4} & Crack - Transverse}\\
+\parbox{3cm}{D-5} & Crack - Longitudinal}\\
+\parbox{3cm}{D-6} & Gel Coat Damage}\\
+\parbox{3cm}{D-7} & Crack / De-bond LE}\\
+\parbox{3cm}{D-8} & Crack / De-bond TE}\\
+\parbox{3cm}{D-9} & 3M Tape Damage}\\
+\parbox{3cm}{D-10} & Dirt}\\
+\parbox{3cm}{D-11} & Rust / Corrosion on Metallic Parts}\\
+\parbox{3cm}{D-12} & Add-on Missing}\\
+\parbox{3cm}{D-13} & Lightning Receptor Missing}\\
+\parbox{3cm}{D-14} & Lightning Receptor Damaged ($>$50 $#$ material)}\\
+\parbox{3cm}{D-15} & Loss of Conductivity}\\
+\parbox{3cm}{D-16} & Blocked Drainage}\\
+\parbox{3cm}{D-17} & Impact Damage}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\end{tabular}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D2.jpg}
+            \caption[Damage type D-2: Leading Edge Erosion]%
+            {{\small Damage type D-2: Leading Edge Erosion}}    
+            \label{fig:D2}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D3.jpg}
+            \caption[Damage type D-3: Lightning Strike Damage]%
+            {{\small Damage type D-3: Lightning Strike Damage}}    
+            \label{fig:D3}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D4.jpg}
+            \caption[Damage type D-4: Crack - Transverse]%
+            {{\small Damage type D-4: Crack - Transverse}}    
+            \label{fig:D4}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D5.jpg}
+            \caption[Damage type D-5: Crack - Longitudinal]%
+            {{\small Damage type D-5: Crack - Longitudinal}}    
+            \label{fig:D5}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D6.jpg}
+            \caption[Damage type D-6: Gel Coat Damage]%
+            {{\small Damage type D-6: Gel Coat Damage}}    
+            \label{fig:D6}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=30]{Images/D7.jpg}
+            \caption[Damage type D-7: Crack / De-bond LE]%
+            {{\small Damage type D-7: Crack / De-bond LE}}    
+            \label{fig:D7}
+        \end{subfigure}
+         \end{figure*}
+         
+   \begin{figure*}[htbp]
+   \ContinuedFloat
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=50]{Images/D8.jpg}
+            \caption[Damage type D-8: Crack / De-bond TE]%
+            {{\small Damage type D-8: Crack / De-bond TE}}    
+            \label{fig:D8}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D9.jpg}
+            \caption[Damage type D-9: 3M Tape Damage]%
+            {{\small Damage type D-9: 3M Tape Damage}}    
+            \label{fig:D9}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D10.jpg}
+            \caption[Damage type D-10: Dirt]%
+            {{\small Damage type D-10: Dirt}}    
+            \label{fig:D10}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D12.jpg}
+            \caption[Damage type D-12: Add-on Missing]%
+            {{\small Damage type D-12: Add-on Missing}}    
+            \label{fig:D12}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D13.jpg}
+            \caption[Damage type D-13: Lightning Receptor Missing]%
+            {{\small Damage type D-13: Lightning Receptor Missing}}    
+            \label{fig:D13}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=100]{Images/D14.jpg}
+            \caption[Damage type D-14: Lightning Receptor Damaged (>50\% material)]%
+            {{\small Damage type D-14: Lightning Receptor Damaged (>50\% material)}}    
+            \label{fig:D14}
+        \end{subfigure}
+        \hfill
+        \caption[Examples of each of the damage classes.]
+        {\small Examples of each of the damage classes.}    
+        \label{fig:dam_ex}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=0.7\textwidth]{Images/dam_type_distr.png}
+        \caption[Damage type distribution. All possible defects/classes.]
+        {\small Damage type distribution. All possible defects/classes.} 
+        \label{fig:dam_type_distr}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+After the annotation, a total of 1677 defects were obtained. As it can be seen in Figure \ref{fig:dam_type_distr}, the classes are extremely unbalanced, and there are classes that barely have any samples. As mentioned earlier, there are some classes with a greater need to be detected due to their severity and others, such as \emph{'Dirt'}, which are less important since they do not cause significant damage to the blade. Specifically, classes D-2 \emph{'Leading Edge Erosion'}, D-3 \emph{'Lightning Strike Damage'}, D-4 \emph{'Crack - Transverse'} and D-5 \emph{'Crack - Longitudinal'}, are the most important ones, so this work will focus on them. Their distribution, and the number of examples of each class can be seen in Figure \ref{fig:dam_type_distr_simp}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=0.7\textwidth]{Images/dam_type_distr_simp.png}
+        \caption[Damage type distribution. Considered defects/classes.]
+        {\small Damage type distribution. Considered defects/classes.} 
+        \label{fig:dam_type_distr_simp}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In addition, D-4 \emph{'Crack - Transverse'} and D-5 \emph{'Crack - Longitudinal'} damages in practice are very similar as far as WTG blade maintenance is concerned, so they will be grouped together for damage classification. Also, for further object detection purposes, a class with regions that do not contain any type of defect is added, D-0 \emph{'No Damage'}, extracted from regions of the original images that do not show any damage. Therefore, the final dataset used for the experiments in this work consists of the following classes, shown in Table \ref{tab:num_im_class}.
+
+As can be easily noticed, the number of available samples of each class is clearly lower than required for any image classification application, and even more for object detection, which is why it has been decided to approach the problem as a \emph{few-shot learning} scenario.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb!]
+\centering    
+\caption{Number of images per defect type in the baseline dataset.}
+\label{tab:num_im_class}
+\begin{tabular}{lccp{10cm}}
+\hline\noalign{\smallskip}
+\textbf{Code} & \textbf{Damage Type} & \textbf{Number of images}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\parbox{3cm}{D-2} & Leading Edge Erosion} & 59\\
+\parbox{3cm}{D-3} & Lightning Strike Damage} & 230\\
+\parbox{3cm}{D-4/5} & Crack - Transverse and Longitudinal} & 252\\
+\parbox{3cm}{D-0} & No Damage} & 119\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\textbf{} & \textbf{All} & \textbf{660}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\end{tabular}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Image preprocessing}
+\label{sec:imPreprocess}
+As can be seen in Figure \ref{fig:dam_ex}, the images of the damaged regions have different shapes and aspect ratios, so the main preprocessing to be done is to resize them to square images in order to avoid distortions, since the input to the network will be square. To do this, the shortest side of the image is filled with zeros, so that the image is not distorted when resized. The result can be seen in Figure \ref{fig:prepr_im_ex}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+\vskip\baselineskip
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/d2_res.jpg}
+            \label{fig:d2res}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/d3_res.jpg}
+            \label{fig:d3res}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/d45_res.jpg}  
+            \label{fig:d4res}
+        \end{subfigure}
+       \caption[Preprocessed images examples.]
+        {\small Preprocessed images examples.}    
+        \label{fig:prepr_im_ex}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

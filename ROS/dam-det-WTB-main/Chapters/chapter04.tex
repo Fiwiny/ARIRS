@@ -1,0 +1,251 @@
+\label{chapter:4}
+This chapter describes and analyses the conducted experiments. Section \ref{sec:evMetrics} details the metrics used for evaluating the method's performance. Then, the baseline experiment and the method proposed in this work are presented. Finally, the results of each of them are presented, comparing and explaining the advantages of the proposed method.
+
+\section{Evaluation metrics}
+\label{sec:evMetrics}
+The performance of the proposed model will be assessed by four ranking metrics: \emph{accuracy}, \emph{precision}, \emph{recall} and \emph{f1-score}, shown in In Eq. \ref{eq:accuracy} - \ref{eq:f1score}.
+
+\begin{equation}
+\label{eq:accuracy}
+    Accuracy = \frac{TP + TN}{TP + FP + FN + TN}
+\end{equation}
+
+\begin{equation}
+\label{eq:precision}
+    Precision = \frac{TP}{TP + FP}
+\end{equation}
+
+\begin{equation}
+\label{eq:recall}
+    Recall = \frac{TP}{TP + FN}
+\end{equation}
+
+\begin{equation}
+\label{eq:f1score}
+    F1-score = 2* \left(\frac{Precision*Recall}{Precision + Recall}\right)
+\end{equation}Where TP, TN, FP and FN are:
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{True Postive (TP):} the model correctly predicts the positive class.
+    \item[\tiny$\blacksquare$]\textbf{False Postive (FP):} the model incorrectly predicts the positive class.
+    \item[\tiny$\blacksquare$]\textbf{True Negative (TN):} the model correctly predicts the negative class.
+    \item[\tiny$\blacksquare$]\textbf{False Negative (FN):} the model incorrectly predicts the negative class.
+\end{itemize}
+
+Unlike binary classification, in multi-class classification there is no positive and negative class. As a consequence, to calculate each of these metrics for each of the classes present in the dataset, the metrics are computed by taking the class for which it is being calculated as the positive class and all other classes as the negative.
+
+\section{Baseline experiment and Siamese Network proposal}
+\label{sec:experiments}
+
+\subsection{Baseline experiment}
+\label{subsec:baselineExp}
+
+The baseline experiment, whose diagram is shown in Figure  \ref{fig:diag_base}, consists of fine-tuning with the target training dataset (of blade damage image regions) the previously described neural network model based on the Inception Resnet (V1) backbone initialized with the pre-trained weights of the VGGFace2 database. This baseline will be compared with the Siamese Neural Network architecture proposal.
+
+For this experiment, the 90\% of the dataset is used for training purposes and the rest for testing the model. Out of that 90\% of the training set, an 80\% is for the training phase and a 20\% for the validation phase.
+
+The model training consists of 8 epochs with batches of 32 images each one. After training, a 0.73 accuracy in validation is obtained. 
+
+For the model test, the trained network is used to extract the features from new images, which are 8631 element vectors, known as \emph{embeddings}. Then, the most probable class to which they belong is computed using the distance with the representative embeddings of the training set. This is, the class of the closest embeddings to the query embedding is assigned as the query sample class. This testing experiments are conducted with the 10\% of the whole database, \emph{i.e.} only 12 images from the D-0 class, 6 from the D-2 class, 23 from the D-3 class, and 26 from the D-4/5 class. Ideally, the testing would be performed with many more samples, but the scarcity of available data prevents that course of action.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+            \includegraphics[width=0.7\textwidth]{Images/diagrama_baseline.jpg}
+             \caption[Baseline model diagram.]
+            {\small Baseline model diagram.}   
+            \label{fig:diag_base}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Proposed Siamese Network experiment}
+\label{subsec:siameseExp}
+
+The proposed Siamese Neural Network described in \ref{chapter:3} uses a pairwise sample creation scheme with the training database to estimate the weights (of the model) of every branch of the Siamese architecture. These branches are also based on the neural network Inception Resnet (V1) initialized with the pre-trained weights of the VGGFace2 database.
+
+For this experiment, the training-validation-testing sample distribution is the same as in the other experiment: the 90\% of the dataset is used for training purposes and the rest for testing the model. Out of that 90\% of the training set, an 80\% is for the training phase and a 20\% for the validation phase.
+
+The Siamese model training consists of batches of 90 random pairs of images among the 217.470 possible image pairs. Every 100 iterations the model is tested in a slightly different way (as described by Section \ref{subsec:train}) to the classical one used in the baseline model. For each test phase, 400 experiments are created consisting of K = 20 pairs of images from the test set. In each experiment only one of the pairs is composed of images belonging to the same class, and the other 19 pairs are composed of images from two different classes. An experiment is considered to be successful only if the pair, out of the 20 possible pairs, with the smallest distance between their embeddings is the one formed by the two images of the same class. This makes the training much more demanding than the classical training. In fact, the equivalent experiments to the baseline would consider only two pairs: one of images of the same class and another of images of a different class. After training, a 0.9425 accuracy is obtained, which means that out of the 400 experiments, the pair formed by images of the same class, out of the 20 possible ones, is correctly selected  94.25\%.
+
+For testing the model, only one of the Siamese branches is used to extract features from new images (8631 element vectors). Then, the most probable class to which they belong is computed by calculating the distance between the embeddings of the training set (in fact a support subset chosen randomly from the training set) and the embedding of the query sample. This testing experiments are conducted with a subset consisting of 10\% of the total images, \emph{i.e.} only 12 images from the D-0 class, 6 from the D-2 class, 23 from the D-3 class, and 26 from the D-4/5 class, resulting in approximately 6900 possible image pairs. Ideally, the testing would be performed with many more samples, but the adopted \emph{few-shot learning} scenario strategy has allowed to successfully alleviate the problem in comparison with the baseline approach.
+
+\section{Quantitative results}
+\label{sec:quant_results}
+
+The obtained classification performance using both models is shown in Figure \ref{fig:conf_mat} by means of the confusion matrix and in Tables \ref{tab:base_metrics} and \ref{tab:prop_metrics} using the metrics presented in Section \ref{sec:evMetrics}. 
+
+As can be seen, the performance of the proposed Siamese architecture clearly outperforms the results obtained by the baseline model. Specifically, in terms of \emph{accuracy}, the Siamese architecture obtains 0.13 points more than the baseline model. In addition, in terms of \emph{precision} (percentage of correct class predictions), the Siamese network performes better than the baseline model by 0.19 points, being even 1.00 in classes D-2 and D-3. That is, whenever the Siamese network classifies a sample as one of these two classes, it is right. Furthermore, it is also clearly superior in terms of \emph{Recall}, beating the baseline model by 0.16 points. This means that the Siamese model is also much better in the percentage of true positives correctly identified. All this is also reflected in the \emph{F1-score}, a very useful metric in highly unbalanced datasets such as the one used in this work.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+            \includegraphics[width=\textwidth]{Images/base_conf_mat.png}
+             \caption[Baseline model test confusion matrix.]
+            {\small Baseline model test confusion matrix.}   
+            \label{fig:base_conf_mat}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+        \centering
+            \includegraphics[width=\textwidth]{Images/prop_conf_mat.png}
+             \caption[Proposed model test confusion matrix.]
+            {\small Proposed model test confusion matrix.}   
+            \label{fig:prop_conf_mat}
+        \end{subfigure}
+        \caption[Test confusion matrices.]
+        {\small Test confusion matrices.}    
+        \label{fig:conf_mat}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[h!]
+\begin{center}
+\vskip\baselineskip
+\caption{Baseline model test evaluation metrics.}
+\label{tab:base_metrics}
+\begin{tabular}{rr|cccc}
+\noalign{\smallskip}\hline\noalign{\smallskip} 
+\textbf{Class} & \textbf{Support} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 - score}\\
+\noalign{\smallskip}\hline\noalign{\smallskip} 
+D-2 & 6 &  & 0.67 & 0.67 & 0.67 \\
+D-3 & 23 &  & 0.83 & 0.87 & 0.85 \\
+D4/5 & 26 &  & 0.88 & 0.85 & 0.86 \\
+D-0 & 12 &  & 0.67 & 0.67 & 0.67 \\
+\noalign{\smallskip}\hline\noalign{\smallskip} 
+\textbf{Total} & \textbf{67} & \textbf{0.81} & \textbf{0.76} & \textbf{0.76} & \textbf{0.76} \\
+\hline
+\end{tabular}}
+\vskip\baselineskip
+\caption{Proposed model test evaluation metrics.}
+\label{tab:prop_metrics}
+\begin{tabular}{rr|ccccc}
+\noalign{\smallskip}\hline\noalign{\smallskip} 
+\textbf{Class} & \textbf{Support} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 - score}\\
+\noalign{\smallskip}\hline\noalign{\smallskip} 
+D-2 & 6 &  & 1.00 & 0.83 & 0.91 \\
+D-3 & 23 &  & 1.00 & 0.91 & 0.91 \\
+D4/5 & 26 &  & 0.90 & 1.00 & 0.95 \\
+D-0 & 12 &  & 0.92 & 0.92 & 0.92 \\
+\noalign{\smallskip}\hline\noalign{\smallskip} 
+\textbf{Total} & \textbf{67} & \textbf{0.94} & \textbf{0.95} & \textbf{0.92} & \textbf{0.93} \\
+\hline
+\end{tabular}}
+\end{center}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Qualitative results}
+\label{sec:qual_results}
+
+In Figure \ref{fig:embs}, a 2D visualization using t-SNE of the training set embeddings can be seen for the baseline model and the Siamese one. T-SNE \cite{van2008visualizing} is a 2D representation of the 8631 - embeddings for visualizing the achieved distribution of the samples of every class after the training procedure. In the  baseline model, a certain distance can be observed between the embeddings of the different classes, although many of them are mixed and some classes are not clearly distinguished from others. In the case of the Siamese model, it can be observed that, with the exception of a very few cases, the embeddings are perfectly grouped by class, maintaining a considerable distance between the different classes, making it very easy to distinguish between them. Even several mislabelled samples were detected after plotting the t-SNE graph, as they were found to be close to the group of embeddings of the wrong class. After correcting their labels, the model was re-trained. This shows the potential of this type of visualisation for high-dimensional feature vectors.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.49\textwidth}
+       	    \centering
+            \includegraphics[width=\textwidth]{Images/base_emb.png}
+             \caption[Baseline model image embeddings.]
+            {\small Baseline model image embeddings.}   
+            \label{fig:base_embs}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.49\textwidth}  
+            \centering
+            \includegraphics[width=\textwidth]{Images/prop_emb.png}
+             \caption[Proposed model image embeddings.]
+            {\small Proposed model image embeddings.}   
+            \label{fig:prop_embs}
+        \end{subfigure}
+        \caption[t-SNE representation of the image embeddings.]
+        {\small t-SNE representation of the image embeddings.}    
+        \label{fig:embs}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The samples shown in Figure \ref{fig:test_errors} are those misclassified in the test phase of the Siamese Neural Network along with actual close examples of these wrongly selected classes. Three of them have been classified as D-4/5 but they actually belong to classes D-0 and D-3, and another one, belonging to class D-2, has been classified as D-0. The \emph{Leading Edge Erosion} seen in Figure \ref{fig:d2_d0} has been classified as \emph{No damage} class possibly because its texture is not too sharp, so the network has identified it more with examples of class D-0 that have some imperfections. The ones in Figure \ref{fig:d3_d45} and \ref{fig:d3_d45_2} correspond to class \emph{Lightning Strike Damage}, but have been classified as \emph{Crack - Transverse and Longitudinal}. This could be due to its longer shape than other damages of the same class, which may resemble a crack (seen to the right of each one). The same for Figure \ref{fig:d0_d45}, which although it does not have any damage, the elongated wrinkle in that surface can be similar to the texture of a crack.
+
+In contrast, Figure \ref{fig:test_hits} shows examples of test samples that have been correctly classified by the Siamese network.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/D2-D0.jpg}
+            \caption[D-2 image classified as D-0 class (left) and actual D-0 example (right).]%
+            {{\small D-2 image classified as D-0 class (left) and actual D-0 example (right).}}    
+            \label{fig:d2_d0}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.4\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{Images/D0-D45.jpg}
+            \caption[D-0 image classified as D-4/5 class (left) and actual D-4/5 example (right).]%
+            {{\small D-0 image classified as D-4/5 class (left) and actual D-4/5 example (right).}}     
+            \label{fig:d0_d45}
+        \end{subfigure}
+        \vskip\baselineskip
+        \begin{subfigure}[b]{0.4\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/D3-D45.jpg}
+            \caption[D-3 image classified as D-4/5 class (left) and actual D-4/5 example (right).]%
+            {{\small D-3 image classified as D-4/5 class (left) and actual D-4/5 example (right).}}    
+            \label{fig:d3_d45}
+        \end{subfigure}
+        \quad
+        \begin{subfigure}[b]{0.4\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/D3-D45_2.jpg}
+           \caption[D-3 image classified as D-4/5 class (left) and actual D-4/5 example (right).]%
+            {{\small D-3 image classified as D-4/5 class (left) and actual D-4/5 example (right).}}      
+            \label{fig:d3_d45_2}
+        \end{subfigure}
+        \caption[Examples of wrongly classified images in the Siamese architecture test phase.]
+        {\small Examples of wrongly classified images in the Siamese architecture test phase.}    
+        \label{fig:test_errors}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/d0_buena.jpg}
+            \caption[D-0 class.]%
+            {{\small D-0 class.}}    
+            \label{fig:d0_good}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.4\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{Images/d2_buena.jpg}
+            \caption[D-2 class.]%
+            {{\small D-2 class.}}     
+            \label{fig:d2_good}
+        \end{subfigure}
+        \vskip\baselineskip
+        \begin{subfigure}[b]{0.4\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/d3_buena.jpg}
+            \caption[D-3 class.]%
+            {{\small D-3 class.}}    
+            \label{fig:d3_good}
+        \end{subfigure}
+        \quad
+        \begin{subfigure}[b]{0.4\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/d45_buena.jpg}
+           \caption[D-4/5 class.]%
+            {{\small  D-4/5 class.}}      
+            \label{fig:d45_good}
+        \end{subfigure}
+        \caption[Examples of successfully classified images of each class in the Siamese architecture test phase.]
+        {\small Examples of successfully classified images of each class in the Siamese architecture test phase.}    
+        \label{fig:test_hits}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%

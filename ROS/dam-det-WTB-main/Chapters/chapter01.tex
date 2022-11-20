@@ -1,0 +1,233 @@
+\label{chapter:2}
+
+This chapter describes the state of the art in the field of wind turbine blades damage detection. Firstly, section \ref{sec:objectDetction} provides an introduction to Object Detection and image classification, and the main algorithms for Object Detection based on Deep Learning are described. The following section \ref{sec:relatedWork} presents a review of related works, starting from those using Machine Learning techniques to those using Deep Learning ones applied to imaging. In section \ref{sec:challenges}, the challenges to be faced in this task and the current approaches to address them are described. Also, it proposes a young but promising approach which might be useful for successfully fulfilling this task.
+
+\section{Object Detection and Classification}
+\label{sec:objectDetction}
+
+Object Recognition is a general term which includes different tasks in Computer Vision.
+
+A system whose purpose is Object Recognition is composed of a first stage of feature extraction followed by a classification stage. The feature extraction methods vary according to the feature they are intended to differentiate and are applied on pixels and sets of pixels of the image. The pixel is the smallest spatial unit of which the digital image is composed and contains information on color, luminance, object shape and other properties. The classification stage compares the features that the system has associated for each object class with the features extracted from the image, returning the probability for each recognized object to belong to a class \cite{juli2020}.
+
+Different related Computer Vision applications will be described. Object Recognition, as previously mentioned, is a term that includes tasks such as image classification, Object Localization and Object Detection.
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{Image Classification} focuses on predicting the class of an object found in an image. It is usually in the foreground and isolated from other objects.
+    \item[\tiny$\blacksquare$] \textbf{Object Localization} involves the identification of the coordinates of one or more objects in an image which usually contains multiple objects in different planes and other elements (e.g. the sky).
+     \item[\tiny$\blacksquare$] \textbf{Object Detection} is the resulting combination of these two applications: locating objects in the image with \emph{bounding boxes} and labeling each \emph{bounding box} indicating the class to which the detected object belongs from a predefined set. Each \emph{bounding box} is defined by two of its corners, or alternatively by its upper left corner (\emph{x}, \emph{y}) and the width (\emph{w}) and height (\emph{h}) of the rectangle (\emph{x}, \emph{y}, \emph{h}, \emph{w}). 
+   \item[\tiny$\blacksquare$] \textbf{Object Segmentation.} A further approach in Object Recognition is segmentation. For Object Segmentation, each pixel of the image is assigned to a class from a predefined set. Within segmentation, it can be distinguished between semantic segmentation and instance segmentation. Instance segmentation recognizes for each pixel the class to which it corresponds and whether it is of a different instance from others of the same class in the image. Semantic segmentation returns the class value of each pixel without distinguishing the instance. 
+\end{itemize}
+
+Figure \ref{fig:CVapps} shows examples of the results obtained by applying different computer vision methods to the same image.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/im_classif.png}
+            \caption[Image classification]%
+            {{\small Image classification}}    
+            \label{fig:im_classif}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.48\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{Images/obj_detect.png}
+            \caption[Object detection]%
+            {{\small Object detection}}     
+            \label{fig:obj_detect}
+        \end{subfigure}
+        \vskip\baselineskip
+        \begin{subfigure}[b]{0.48\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/semantic_segm.png}
+            \caption[Semantic Segmentation]%
+            {{\small Semantic Segmentation}}    
+            \label{fig:semantic_segm}
+        \end{subfigure}
+        \quad
+        \begin{subfigure}[b]{0.48\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/inst_segm.png}
+           \caption[Instance segmentation]%
+            {{\small Instance segmentation}}      
+            \label{fig:inst_segm}
+        \end{subfigure}
+        \caption[Four examples of Computer Vision applications. Adapted from \cite{garcia2017review}.]
+        {\small Four examples of Computer Vision applications. Adapted from \cite{garcia2017review}.}    
+        \label{fig:CVapps}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Object Detection algorithms}
+\label{sec:objectDetectionAlgorithms}
+
+Traditional object recognition approaches include methods for the feature extraction stage such as DPM \cite{pedro2010dpm}, SIFT \cite{lowe2004sift} and HOG \cite{dalal2005hog}. These feature extraction algorithms were major advances in object recognition. However, in 2012, Krizhevsky et al. \cite{alex2012alexnet} showed better accuracy results in the ImageNet Large Scale Visual Recognition Challenge (ILSVRC) using a Convolutional Neural Network called AlexNet. Since then, different models have been developed relying on the AlexNet architecture. Currently, Convolutional Neural Networks (CNNs) are the most widely used technique in computer vision tasks. For this reason, a study of selected algorithms for object detection has been performed focusing only on those based on CNNs \cite{juli2020}.
+
+Among the Deep Learning algorithms used for object detection, two categories can be distinguished:
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{Two stage detectors} first use region proposal methods, such as the region proposal networks (RPNs), to generate regions of interest in the images. Then the feature extraction of the regions of interest is performed by using CNNs. The obtained features are used to detect and classify objects in the image. Some examples of two-stage algorithms are R-CNN \cite{girshick2014rcnn}, Fast R-CNN \cite{girshick2015fast}, Faster R-CNN \cite{ren2015faster} and Mask R-CNN \cite{he2017mask}.
+    \item[\tiny$\blacksquare$] \textbf{Single stage detectors} do not have a region proposal network. The images are directly passed as an input to a CNN where their features are extracted to detect and classify objects. Some examples of single stage algorithms are the well known YOLO (You Only Look Once) \cite{redmon2016yolo} or SSD (Single Shot MultiBox Detector) \cite{lui2016ssd}.
+\end{itemize}
+
+Comparing these two types of algorithms, two stage detectors are more accurate than the single stage ones, however, they have the disadvantage of being slower than single stage ones. On the other hand, single stage models are slightly less accurate, giving worse results in the detection of small objects, but their execution time is shorter, which makes them more efficient for real-time image processing \cite{soviany2018tradeoff}. Therefore, it can be said that for the damage detection in wind turbine blades task, in principle, single stage detectors would be more suitable, since accuracy is more important than speed, especially for very small objects with respect to the size of the blades.
+
+
+\section{Background and related work for predictive maintenance of wind turbine blades}
+\label{sec:relatedWork}
+
+Several works focus on Machine Learning algorithms for predictive maintenance of wind turbine blades. 
+
+Some of them based on sensors, such as vibration sensors \cite{joshuva2017data}, acoustic sensors \cite{jialin2016acoustic} \cite{han2014damage,regan2017wind}, or ultrasonic sensors \cite{ruizhen2016progress,alfredo2019linear}. These are non-destructive algorithms which allow predictive maintenance of the wind turbine blades, but require human and material resources, as well as maintenance of the sensors, which are installed specifically for this purpose. Also, they are not able to automatically classify different types of defects.
+
+Others, rely on Supervisory Control and Data Acquisition (SCADA), which are frameworks that require a complex and advanced installation in wind farms to detect particular events. For example ice in the wind turbines blade surfaces is detected in \cite{chen2018learning} by using a Deep Neural Network. However, they have the disadvantage that they are not as reliable as image-based algorithms, whose rich information allows expert humans to make accurate predictions.
+
+There are also works that automatically analyse color imagery for the task of wind turbine blade damage detection, such as \cite{long2019two} and \cite{long2017automatic}. In the first one a two-stage approach is proposed in order to detect surface cracks location in blade images captured by unmanned aerial vehicles (UAVs). In the first stage, a sliding window is used to extract multiple proposal regions per image, while the second stage focuses on detecting the crack contour using the parallel Jaya K-means algorithm. The second work also proposes a method for automatically detecting surface cracks in wind turbine blades in images acquired from UAVs images, by using stage classifiers selected from a set of base models: LogitBoost, Decision Tree, and Support Vector Machine. The main drawback found in these algorithms is the manual selection of image features, which are proven to be less accurate than the features automatically computed by Deep Learning in many fields.
+
+Deep Learning has been successfully used for image recognition tasks in several fields for its superior performance regarding other traditional machine learning methods, especially for the adapted computation of image features to the target task. So there is a potential opportunity to use this type of techniques for damage detection in wind turbine blades. Currently, in some works the are starting to implement Deep Learning algorithms for this task, however, they face an important challenge: Deep Learning algorithms require large volumes of annotated data for training. Although, as mentioned earlier in the Introduction \ref{chapter:introduction}, images of wind turbine blades are already being acquired for maintenance purposes using UAVs or other technologies, the problem is very few of them are labeled to be appropriately used for the involved supervised learning schemes used in most of the Deep Learning strategies. In addition, the different types of damage are usually very unbalanced, specifically, those with greater severity, and therefore a greater need to be detected, usually have very few samples in the existing datasets.
+
+To alleviate the previous problem, the existing works have made use of pre-training strategies, training the involved Deep Neural Networks in other different image domains, to finally perform a fine-tuning with a reduced set of labeled samples in the target domain. Some of these works use a binary or multi-class classification approach. In Yang \emph{et al.} \cite{xiyun2021image}, a pretraining strategy along with a reduced dataset, consisting of 900 images of blades from a wind farm in China, where only about 200 of them contain any defects, is used. Firstly, an image preprocessing step, where the Otsu segmentation method is applied, precedes the image feature extraction with the AlexNet pretrained network, a widely used CNN model which has exhibited a good performance in many fields \cite{alex2012alexnet}. Finally, a random forest is trained and used as classifier. With this model based on transfer learning and ensemble learning, they significantly improve the classification performance for two classes (damage and no damage), in terms of accuracy, sensitivity or recall and specificity or precision, of the algorithms proposed as a basis, including a Machine Learning  algorithm (SVM) and the Deep Neural Network without pretraining. The main limitations are: damage class type or damage severity are not provided, and the pretraining task is performed with out-of-domain data. Other Deep Learning based binary classification algorithms can be found, such as Reddy \emph{et al.} \cite{reddy2019detection} which proposes a CNN trained from scratch to recognise the presence of cracks on the surfaces of WTG blades, achieving also a high accuracy. A multi-type classification model is implemented in Yang \emph{et al.} \cite{yang2020surface}, using the ResNet50 architecture, which shows a better performance than AlexNet for the considered highly imbalanced dataset. These works achieve really interesting results, but they lack of the detection of the place where the damage is located in the blade, which in some cases may be extremely important, since it is one of the most influential factors in the criticality of the damage.
+
+Other works use an object detection approach to search for damages in a entire image, instead of a selected image region. In Shihavuddin \emph{et al.} \cite{shihavuddin2019imaging}, the faster R-CNN algorithm is used to detect 4 different defect types in the wind turbine blades. For this purpose various data augmentation approaches, such as left-to-right and top-to-bottom flip, Gaussian blur and contrast normalization are implemented in order to overcome the challenge of the scarce availability of damage samples for learning. In Deng \emph{et al.} \cite{deng2021imaging} the YOLOv2 architecture is trained for defect detection achieving a faster performance than Faster R-CNN. Finally, in Zhang \emph{et al.} \cite{zhang2021image}, an empirical comparison of the detection performance of some state-of-the-art Deep Learning algorithms, namely Mask R-CNN, YOLOv3, and YOLOv4, tuned for the defect detection task and using various image enhancement and augmentation techniques is presented. Also, the work proposes some new detection performance evaluation metrics, which are: Prediction Box Accuracy, Recognition Rate, and False Label Rate. In this case a rather scarce dataset which contains 4 different defect types is used. Their results suggested that, on average, across all proposed evaluation metrics, Mask R-CNN outperformed all other algorithms. However, Object Detection based approaches are more data hungry than classification ones, and therefore a lack of damage detection performance is more pronounced.
+
+
+\section{Challenges and current approaches}
+\label{sec:challenges}
+The major challenges in the field of visual damage detection are the scarcity of annotated data available, especially those approaches focused on object detection. Also, the need to detect different types of defects, to decide the severity of the damage, makes more complex the problem, requiring even more data for represent every possible damage.
+
+In recent years, several approaches have appeared to address the scarcity of data in machine learning, which are encompassed as \emph{Few-Shot Learning} techniques.
+
+Humans are able to learn to identify new categories from a few examples, even a single one, and can sometimes even understand perceptually without learning. For example, people can recognize a person's face from simply looking at it in a photograph. This is the case of \emph{One-Shot} or \emph{Few-Shot Learning} scenarios, in which predictions given only few, or a single example of each new class must be correctly made. Techniques which try to address this kind of problems aim to produce models that can generalize from small amounts of labeled data. This field is quite young but, since it is a really close to real-world application scenario, it is being actively studied by imitating the process of the human brain.
+
+In image classification, a \emph{N-way K-shot} problem can be defined by a support set composed of \emph{N} classes and \emph{K} labeled images for each class,  and \emph{Q} query images, which must be classified as one of the N classes (see Figure \ref{fig:fewshot}). Depending on how many samples are actually available (\emph{K}), there are several variations of this problem \cite{ettiene2020meta}.
+\begin{itemize}[]
+	 \item[\tiny$\blacksquare$] \textbf{Few-Shot Learning}, where only a few labeled samples, typically from two to ten for each class, are available (\emph{K} $<$ 10).      
+     \item[\tiny$\blacksquare$] \textbf{One-Shot Learning}, where only one labeled sample for each class is available for training (\emph{K} = 1).
+     \item[\tiny$\blacksquare$] \textbf{Zero-Shot Learning}, whose goal is to classify previously unseen samples, \emph{i.e.} classes for which not any training sample exists (\emph{K} = 0).  
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=\textwidth]{Images/few_shot.png}
+        \caption[A 3-way 2-shot classification problem. Images from the query set would need to be
+classified into Labrador, Saint-Bernard and Pug classes \cite{ettiene2020meta}.]
+        {\small A 3-way 2-shot classification problem. Images from the query set would need to be
+classified into Labrador, Saint-Bernard and Pug classes \cite{ettiene2020meta}.} 
+        \label{fig:fewshot}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Different solutions for this framework have already been proposed. Firstly, \emph{Transfer Learning}, which is a method by which high-performance networks trained with large amounts of data obtained from different domains are created. These trained models are then adapted to the scarcity of data in the target domains. Also, \emph{Data Augmentation}, which consists in the generation of synthetic data using a specific method, what allows to enhance the performance of deep neural networks thanks to a larger volume of data. Finally, \emph{Metric-Learning methods} learn how to compare data instances. In \emph{few-shot learning} scenarios of image classification, convolutional neural networks are trained to classify query images depending on their similarity to support set images. The network outputs for each image a feature vector, which is then compared to the feature vectors of other images to predict a classification. A good example of this would be the Siamese Neural Networks by Koch \emph{et al.} \cite{koch2015siamese}, which achieve interesting results on \emph{few-shot} image classification.
+
+\subsection{Transfer Learning}
+\label{sec:trasnferLearning}
+Humans are able to take information from a previously learned task and use it beneficially to learn a related task. This would be the idea behind the Transfer Learning technique. In  Deep Learning, this technique is implemented by pre-training neural networks on various tasks which provide generic features which are then used to build models for new target tasks without training specific neural networks from scratch for the mentioned target task \cite{pau2020}.
+
+There are two Transfer Learning strategies: a pre-trained model can be used as feature extractor for the target data only updating the final layer of the model, or retraining the model with the target data initializing with the learned weights from the training with the large amounts of data, known as \emph{fine tuning} \cite{sinno2010transfer}.
+
+In imaging, Transfer Learning is commonly used to fine-tune the pre-trained networks parameters for feature extraction purposes. These typical neural networks include AlexNet, VGG-16, VGG-19 or ResNet \cite{shaha2018transfer}.
+
+
+\subsection{Data Augmentation}
+\label{sec:dataAugmentation}
+The idea behind Data Augmentation is to generate synthetic data from the real dataset through various transformation and invariant to noise techniques by modifying different parameters.
+
+In imaging, the increase of such data is used to reduce \emph{overfitting} during the training phase, and also to minimize the existing imbalance in some classes when training machine learning systems, \emph{i.e.} when the different classes used for training an algorithm do not have an equal or similar number of examples \cite{shijie2017dataaugm}. 
+
+For image classification models, data can be augmented using Deep Learning based approaches which require the training of models to generate the new synthetic samples, namely Generative Adversarial Networks (GAN) \cite{jiang2020gans}, Autoencoders (AE) \cite{devries2017aes}, or Variational Autoencoders (VAE) \cite{norouzi2020vaes} among others. On the other hand, there are also augmentation methods which do not require the training of these models. They are based on transformations such as geometric, photometric and noise invariant alterations \cite{zoph2020augment,pau2020}.
+\begin{itemize}[]
+    \item[\tiny$\blacksquare$]\textbf{Geometric transformations} alter the geometry of the image to ensure that the model is invariant to the position and orientation of the image. Rotation, flipping, shifting, scaling and cropping would be good examples of these, which can be seen in figure \ref{fig:geom_transf}
+    \item[\tiny$\blacksquare$] \textbf{Photometric transformations} modify the color channels in order to make the model invariant to the color and illumination of the image. Some examples would be changing the brightness, contrast, saturation or hue of an image, as shown in figure \ref{fig:photom_transf}.
+    \item[\tiny$\blacksquare$] \textbf{Noise invariant transformations} are used in order to help the CNNs learn noise-robust features. Gaussian blur, sharpness or edge detection which are shown in figure \ref{fig:noise_inv_transf} are examples of this method.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.9\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/geom_transf.png}
+            \caption[Examples of geometric transformations]%
+            {{\small Examples of geometric transformations}}    
+            \label{fig:geom_transf}
+        \end{subfigure}
+        \vskip\baselineskip
+        \begin{subfigure}[b]{0.9\textwidth}  
+            \centering 
+            \includegraphics[width=\textwidth]{Images/photom_transf.png}
+            \caption[Examples of photometric transformations]%
+            {{\small Examples of photometric transformations}}     
+            \label{fig:photom_transf}
+        \end{subfigure}
+        \vskip\baselineskip
+        \begin{subfigure}[b]{0.9\textwidth}   
+            \centering 
+            \includegraphics[width=\textwidth]{Images/noise_inv_transf.png}
+            \caption[Examples of noise invariant transformations]%
+            {{\small Examples of noise invariant transformations}}    
+            \label{fig:noise_inv_transf}
+        \end{subfigure}
+        \quad
+        \caption[Examples of Data Augmentation techniques based on image transformations \cite{keita2021five}.]
+        {\small Examples of Data Augmentation techniques based on image transformations \cite{keita2021five}.} 
+        \label{fig:dataaugm}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Siamese Neural Networks}
+\label{sec:siamese}
+Siamese Neural Networks are a type of Deep Neural Networks. They were proposed by Koch \emph{et al.} in his work \emph{"Siamese Neural Networks for One-shot Image Recognition"} \cite{koch2015siamese}.
+
+It consists of two twin Deep Neural Networks which accept distinct inputs, whose parameters are tied together, and their output, \emph{i.e.} the image feature vectors known as \emph{embeddings}, are fed to a cojoining layer which computes the distance between the two outputs, as shown in Figure \ref{fig:siamese}. The idea is, as both networks share parameters, when having the same or extremely similar inputs the outputs of each network will not be very different from each other, so the distance will be minimized, and the opposite when feeding the network with different inputs. Notice that this network is not learning to classify an image directly to any of the output classes, rather, it is learning a similarity function, which takes two images as input and expresses how similar they are.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering            
+        \includegraphics[width=\textwidth]{Images/siamese_nn.png}
+        \caption[High-level architecture of a Siamese Neural Network.]
+        {\small High-level architecture of a Siamese Neural Network.} 
+        \label{fig:siamese}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+One of the main advantages of this type of architecture over conventional CNNs is that, since it does not learn to classify the dataset into a given number of classes, but rather to tell whether or not two images belong to the same class, it can be used to make inferences from images of classes it has not been trained with. In addition, it solves the problem of having few samples at the same time as the imbalance between classes, since the input of the network are pairs of images so each image of the dataset can be combined with the rest of the images of the dataset, which makes the number of samples available to train the network considerably larger. That is, from a dataset of n samples, up to $n*(n-1)/2$ different pairs can be made. For instance, while training a conventional CNN with a dataset of 500 samples available, training a Siamese network with the same dataset there would be up to 124.750 pairs available for training.
+
+In Koch \emph{et al.} \cite{koch2015siamese}, their Siamese Neural Network is trained using the Omniglot dataset \cite{lake2015human}, which was collected by Brenden Lake and his collaborators at MIT via Amazon’s Mechanical Turk to produce a standard benchmark for learning from few examples in the handwritten character recognition domain. Omniglot contains examples from 50 alphabets like Latin and Korean or lesser known local dialects, and also includes some fictitious character sets such as Aurek-Besh and Klingon. Their net was trained for a verification task, \emph{i.e.} discriminate
+between the class-identity of image pairs, and hypothesize that networks which do well at verification should generalize to one-shot classification.
+
+As shown in table \ref{tab:one-shot_perf}, comparing the performance of their network against the baseline models, they achieve one-shot accuracy close to human levels, and outperforms all other competing models except HBPL, which relies on prior knowledge about characters or strokes, such as generative information about the drawing process, which is one of the advantages of their model.
+
+These results highlight the great potential of Siamese Neural Networks to approach the \emph{one-shot learning} scenario in an image classification task.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htb!]
+\centering    
+\caption{One-shot accuracy of the Siamese Neural Network against baselines.}
+\label{tab:one-shot_perf}
+\begin{tabular}{lccp{10cm}}
+\hline\noalign{\smallskip}
+\textbf{Method} & \textbf{Test accuracy}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\parbox{8cm}{Humans} & 95.5}\\
+\parbox{8cm}{Hierarchical Bayesian Program Learning} & 95.2}\\
+\parbox{8cm}{Affine model} & 81.8}\\
+\parbox{8cm}{Hierarchical Deep} & 65.2}\\
+\parbox{8cm}{Deep Boltzmann Machine} & 62.0}\\
+\parbox{8cm}{Simple Stroke} & 35.2}\\
+\parbox{8cm}{1-Nearest Neighbor} & 21.7}\\
+\parbox{8cm}{Siamese Neural Net} & 58.3}\\
+\parbox{8cm}{Convolutional Siamese Net} & 92.0}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\end{tabular}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+

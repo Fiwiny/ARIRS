@@ -1,0 +1,164 @@
+\label{chapter:3}
+
+The initial objective of this work was to develop an object detection system to detect defects in the acquired images obtained in WTG blade inspections. Due to the scarcity of data, which severely limits the classification problems, and is even worse in object detection, the scope of the problem was redefined to classify damages in image regions extracted from the images. Thus, in a future work, this network will be able to be used as the backbone of an actual object detector.
+
+This chapter explains the classification network used in this problem, which consists of the implementation of a Siamese Neural Network based on the neural network architecture Inception Resnet (V1).
+
+\section{Siamese Network architecture for the image based classifier}
+\label{sec:siameseArchitecture}
+This architecture has been chosen for this problem because, as mentioned in Section \ref{sec:siamese}, it greatly overcomes the problem of data scarcity and data imbalance, two of the main drawbacks identified in the available dataset, approaching the problem as a \emph{few-shot learning} scenario.
+
+As shown in Figure \ref{fig:diag_comp}, it is composed of two main modules: first, a training module, where the network is trained to predict the similarity between the two input images (\emph{i.e.} a classifier decides whether the two input images belong to the same class or not). And a second module that uses the feature vectors extracted by the previous trained network to classify the query images into the different classes by estimating their highest similarity to the support set (a set of representatives of every class drawn for the training set).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+            \includegraphics[width=\textwidth]{Images/diagrama_comp2.jpg}
+             \caption[Siamese architecture diagram. Train and inference.]
+            {\small Siamese architecture diagram. Train and inference.}   
+            \label{fig:diag_comp}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Training}
+\label{subsec:train}
+
+For the training part, the Siamese Neural Network consist of two twin networks, in this case two Inception Resnets (whose structure will be detailed in section \ref{sec:resnet}), with tied (shared) parameters. It accepts distinct inputs, which are independently processed by each network twin. As a result two feature vectors (\emph{embeddings}) \textbf{h\textsubscript{1}} and \textbf{h\textsubscript{2}} are computed, which are jointly processed by an energy function to compute some similarity measurement. For this purpose, a sigmoid function is used to compute the distance between the twin embeddings, predicting the probability that the two inputs belong to the same class (see Figure \ref{fig:diag_train}). For the two different inputs to the network, the cropped regions of the database are used, extracting for each iteration two random images from the training set that may or may not belong to the same class with the same probability, overcoming the problem of data imbalance.
+
+The \emph{binary cross-entropy} loss function is applied combined with a Sigmoid layer, as it is more numerically stable than using a plain Sigmoid layer followed by the \emph{binary cross-entropy} loss function. The reason is that by combining the operations into one layer, the log-sum-exp operation is much more numerically stable. It is described in Equation \ref{eq:loss_fn}, where N is the batch size, \emph{x\textsubscript{n}} are the inputs, \emph{y\textsubscript{n}} are the targets and \emph{w\textsubscript{n}} are a user-defined rescaling weights applied to each batch element. 
+
+\begin{equation}
+    l(x,y) = \{l_1,...,l_N}\}^T,     l_n = -w_n[y_n  {\displaystyle \cdot} \log\sigma({x_n}) + (1-y_n)  {\displaystyle \cdot } \log{(1-\sigma(x_n))}]
+    \label{eq:loss_fn}
+\end{equation}
+
+The Adam optimizer is used for training the model, where the gradient is additive across the twin networks due to the tied weights. The batch size is limited to 90 image pairs due to GPU RAM constrains, and the learning rate is {\eta}= 0.00006. 
+
+The weights of each of the twin networks are initialized using the pre-trained VGGFace2 weights, as described in Section \ref{sec:resnet}.
+
+The validation is performed every epoch, for a total of 100 epochs. The validation experiments are performed according the \emph{N-way K-shot} framework, which consist of drawing a set of random pairs from each of the N different classes where only one of them contains two instances of the same class, and the rest contains instances of different classes (as shown in Figure \ref{fig:diag_exp}). The experiment is successful when the same class pair is the one with the higher similarity, and failed when one of the other pairs obtains the higher one. The number of pairs in each experiment is K that along with the number of experiments in each validation phase are parameters of the model. In this case 400 experiments with K = 20 pairs in each are tested every epoch. Notice that this type of validation is much more exigent than the traditional validation of a normal classification, whose equivalent would be two-pair experiments. The reason for this is to obtain greater robustness in the \emph{few-shot learning} scheme.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+\vskip\baselineskip
+        \centering
+            \includegraphics[width=0.7\textwidth]{Images/diagrama_experiments.jpg}
+             \caption[Validation experiments diagram.]
+            {\small Validation experiments diagram.}   
+            \label{fig:diag_exp}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Lastly, the training dataset is augmented with some flips and rotations in order to increase its volume and improve training performance. Specifically, vertical and horizontal flips, and random 0 to 360º rotations are applied.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+\vskip\baselineskip
+        \centering
+            \includegraphics[width=\textwidth]{Images/diagrama_train.jpg}
+             \caption[Siamese training architecture diagram.]
+            {\small Siamese training architecture diagram.}   
+            \label{fig:diag_train}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Inference}
+\label{subsec:inference}
+To make predictions, only one of the trained twin networks is used to extract the embedding from the query image (see Figure \ref{fig:diag_infer}). Then, the distance of this feature vector to the other feature vectors belonging to the support set is calculated, deciding whether it belongs to one class or another depending on to which of them have the smaller distance to the query one. This support set of embeddings have been also extracted by the trained network. In this way, the network trained to predict the similarity between two images is used as an N-class classifier (where N is the number of classes present in the support set).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+            \includegraphics[width=\textwidth]{Images/diagrama_inference.jpg}
+             \caption[Siamese inference diagram.]
+            {\small Siamese inference diagram.}   
+            \label{fig:diag_infer}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Inception Resnet (V1)}
+\label{sec:resnet}
+The neural network used as twin network in the Siamese architecture is Inception Resnet (V1) pre-trained with the VGGFace2 database \cite{cao2017vggface}. The VGGFace2 dataset is a public face dataset which contains around 3.31 million images of 9131 subjects, with an average of 362.6 images for each subject. Images are downloaded from Google Image Search and have large variations in pose, age, illumination, ethnicity and profession.
+
+The reason for using this network is that, as in the problem faced in this work, the face detection problems have very few examples of each class, since it is not common to have datasets containing too many images of the same person. In this sense, \emph{transfer learning}, \emph{i.e.} initializing the network to be trained with the pre-trained VGGFace2 weights, will help, along with the Siamese architecture approach to overcome the data scarcity problem.
+
+The Inception network was a significant milestone in the evolution of CNNs for image classification. Whereas other networks tried to improve their performance by stacking more layers, Inception got more complex, getting wider, rather deeper. Its constant evolution lead to the creation of several versions of the network. The most popular ones are Inception v1 \cite{inceptionv1}, Inception v2 and Inception v3  \cite{inceptionv2}, and finally Inception v4 and Inception-ResNet \cite{inceptionresnet}. 
+
+The premise for which Inception V1 was born was to solve the problem of the kernel size election. Due to the huge variation in the location of the information, choosing the right kernel size for the convolution operation becomes crucial. A larger kernel is preferred for information that is distributed more globally, and a smaller kernel is preferred for information that is distributed more locally. Inception added kernels with multiple sizes in the same layers, introducing the \emph{Inception module} (see Figure \ref{fig:incep_module}) which performs convolutions on an input, with 3 different sizes of filters (1x1, 3x3, 5x5). Also, a max pooling is performed, and finally outputs are concatenated and sent to the next inception module. To make this computationally cheaper, the number of input channels can be limited by adding an extra 1x1 convolution before the 3x3 and 5x5 convolutions. This version is called Inception with reductions (see Figure \ref{fig:incep_module_red}).
+
+The last version of Inception, called Inception ResNet, was proposed in the same paper as Inception v4 \cite{inceptionresnet}. There are two versions of Inception ResNet, namely v1 and v2, but this work only refers to v1. This new Inception module was an hybrid inspired by the performance of the ResNet and the original Inception module. It has different versions, as shown in \ref{fig:incep_module_resnet}. It introduces residual connections (as in ResNet) that add the input of the Inception module to its output. The pooling operation inside the main Inception modules were also replaced by residual connections.
+
+The entire Inception Resnet (V1) layout, composed by several Inception modules, can be seen in Figure \ref{fig:inception_resnetv1}. There are also some of the previously explained reduction blocks and a stem block which has some preliminary standard convolutions (detailed in Figure \ref{fig:inception_resnetv1_stem}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+        \begin{subfigure}[b]{\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/incep_mod.png}
+              \caption[Inception module.]
+        	 {\small Inception module.}   
+            \label{fig:incep_module}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Images/incep_mod_reductions.png}
+             \caption[Inception module with reductions.]
+            {\small Inception module with reductions.}   
+            \label{fig:incep_module_red}
+        \end{subfigure}
+       \caption[Inception module and inception module with reductions \cite{inceptionv1}.]
+        {\small Inception module and inception module with reductions \cite{inceptionv1}.}    
+        \label{fig:inception_modules}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+            \includegraphics[width=\textwidth]{Images/incep_mod_resnet.png}
+             \caption[Versions of the Inception Resnet module \cite{inceptionresnet}.]
+            {\small Versions of the Inception Resnet module \cite{inceptionresnet}.}   
+            \label{fig:incep_module_resnet}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+            \includegraphics[width=0.4\textwidth]{Images/inception_resnetv1.jpeg}
+             \caption[Inception Resnet V1 layout \cite{inceptionresnet}.]
+            {\small Inception Resnet V1 layout \cite{inceptionresnet}.}   
+            \label{fig:inception_resnetv1}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[htbp]
+        \centering
+            \includegraphics[width=0.3\textwidth]{Images/inception_resnetv1_stem.jpeg}
+             \caption[Inception Resnet V1 stem \cite{inceptionresnet}.]
+            {\small Inception Resnet V1 stem \cite{inceptionresnet}.}   
+            \label{fig:inception_resnetv1_stem}
+    \end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

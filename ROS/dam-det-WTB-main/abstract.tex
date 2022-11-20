@@ -1,0 +1,43 @@
+\thispagestyle{empty}
+%\begin{center}
+%    \vspace{1cm}
+%    \Large
+%    \textbf{Resumen}
+%\end{center}
+
+\newpage
+\pagenumbering{gobble}
+\titleformat{name=\section}[block]{\bfseries \large}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{\centering Resumen}}}
+\section*{Resumen}
+El Deep Learning se ha utilizado con éxito en tareas de reconocimiento de imágenes en múltiples campos, por lo que existe una oportunidad de utilizar este tipo de técnicas para la detección de daños en las palas de los aerogeneradores. Además, actualmente es común que se adquieran imágenes de las palas con fines de mantenimiento mediante vehículos aéreos no tripulados u otras tecnologías, por lo que no se necesitarían recursos materiales adicionales. Sin embargo, los problemas de detección de objetos requieren de grandes volúmenes de datos anotados para un entrenamiento adecuado, y tales bases de datos no están disponibles en el campo del mantenimiento de palas. Además, los diferentes tipos de daños suelen estar muy desbalanceados, en concreto, los de mayor gravedad (y, por tanto, mayor necesidad de ser detectados) suelen tener menos muestras en los conjuntos de datos existentes. Como resultado, el mayor reto para las soluciones prácticas de Deep Learning en este campo es la escasez de datos anotados para realizar el entrenamiento de los algoritmos. Los enfoques más extendidos para solucionar estos problemas son la aplicación de técnicas de Transfer Learning y de Data Augmentation, sin embargo, no siempre logran alcanzar un rendimiento satisfactorio. Como alternativa, existen otros enfoques para escenarios de escasez de datos, que aún no se han utilizados en el campo de la detección de daños en palas. Este es el caso de las técnicas de \emph{Few-Shot Learning}, en las que solo se utilizan unos pocos ejemplos por clase para entrenar los modelos de Deep Learning. Estas técnicas se inspiran en el hecho de que los seres humanos son capaces de aprender a identificar nuevas categorías a partir de unos pocos ejemplos, incluso uno solo, y a veces pueden incluso comprender perceptivamente sin aprender. Por ejemplo, las personas pueden reconocer la cara de una persona simplemente habiéndola visto en una fotografía. Del mismo modo, los enfoques de \emph{Few-Shot Learning} pretenden producir modelos que puedan generalizar a partir de pocos datos etiquetados. Este campo es bastante joven pero está siendo estudiado activamente, ya que permite una mejor aproximación a las aplicaciones del mundo real. Por ello, en este trabajo de fin de máster, se abordará el problema de la detección de daños en palas de aerogeneradores como un escenario de \emph{Few-Shot Learning}, debido a la escasez de datos existentes, y, para tratar de superarlo, se implementará una Red Neuronal Siamesa.
+
+%\begin{center}
+%    \vspace{0.5cm}
+%    \Large
+%    \textbf{Palabras clave}
+%\end{center}
+
+\titleformat{name=\section}[block]{\bfseries \large}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{\centering Palabras Clave}}}
+\section*{Palabras Clave}
+Palas de aerogeneradores, mantenimiento predictivo, Visión Artificial, Deep Learning, escenarios de escasez de datos, Redes Neuronales Siamesas.
+
+\newpage
+\titleformat{name=\section}[block]{\bfseries \large}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{\centering Abstract}}}
+\section*{Abstract}
+Deep Learning has been successfully used for image recognition tasks in several fields, so there is a potential opportunity to use this type of techniques for damage detection in wind turbine (WTG) blades. Moreover, images of WTG blades are already being acquired for maintenance purposes using UAVs or other technologies, so no additional material resources would be required. However, object detection problems require large volumes of annotated data for a proper training, and such databases are not available in this field. In addition, the different types of damages are usually very unbalanced, specifically, those with greater severity (and therefore a greater need to be detected) usually have fewer samples in the existing datasets. As a result, the major challenge for practical Deep Learning solutions in this field is the scarcity of annotated data to perform the algorithm training. In order to overcome these problems, the most used approaches are Transfer Learning and Data Augmentation, however, they do not always succeed in reaching a satisfactory performance. Alternatively, there are other approaches for data scarcity scenarios, which have not been used in the field of WTG blade damage detection yet. This is the case of \emph{Few-Shot Learning} techniques, which only consider a few examples per class to train the Deep Learning models. These techniques are inspired by the fact that humans are able to learn to identify new categories from a few examples, even a single one, and can sometimes even understand perceptually without learning. For instance, people can recognize a person's face from simply looking at it in a photograph. Similarly, \emph{Few-Shot Learning} techniques aim to produce models that can generalize from small amounts of labeled data. This field is quite young but it is being actively studied, since it allows a better approach to real-world applications. Therefore, in this master's thesis, the problem of damage detection in WTG blades will be approached as a \emph{Few-Shot Learning} scenario, due to the scarcity of existing data, and, in order to try to overcome this, a Siamese neural network will be implemented.
+
+
+\titleformat{name=\section}[block]{\bfseries \large}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{\centering Keywords}}}
+\section*{Keywords}
+Wind turbine blades, predictive maintenance, Computer Vision, Deep Learning, \emph{Few-Shot Learning} scenarios, Siamese Neural Networks.
+
+
+\thispagestyle{empty}
+
+
+
+

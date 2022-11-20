@@ -1,0 +1,191 @@
+\documentclass[12pt, twoside]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[cmex10]{amsmath}
+\usepackage{array}
+\usepackage{stfloats}
+\usepackage{amssymb}
+\usepackage[font=small]{caption}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{textcomp}
+\usepackage{paralist}
+\usepackage{enumitem}
+\usepackage{mathtools, nccmath}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{mwe}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{lipsum}
+\usepackage{hyperref}
+% \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage[export]{adjustbox}
+% \usepackage{lscape}
+\usepackage[paper=portrait,pagesize]{typearea}
+
+\usepackage{blindtext}
+\usepackage{filecontents}
+
+
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+    
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+\usepackage{fancyhdr}
+% \usepackage[backend=biber]{biblatex}
+\usepackage[style=ieee,sorting=none]{biblatex}
+\usepackage{url}
+\usepackage{xurl}
+\usepackage[nottoc,numbib]{tocbibind}
+
+\graphicspath{ {Images/} }
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0.4pt}
+\setcounter{secnumdepth}{5}
+\renewcommand{\thesubsubsection}{\alph{subsubsection})}
+\DeclarePairedDelimiter{\nint}\lfloor\rfloor
+\DeclarePairedDelimiter{\abs}\lvert\rvert
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\addbibresource{references.bib}
+\let\vec\mathbf
+%\makeatletter
+
+\usepackage{xcolor,lipsum}
+\usepackage[explicit]{titlesec}
+
+%% toc %%%%%%
+\newcommand*{\BeginNoToc}{%
+  \addtocontents{toc}{%
+    \edef\protect\SavedTocDepth{\protect\the\protect\value{tocdepth}}%
+  }%
+  \addtocontents{toc}{%
+    \protect\setcounter{tocdepth}{-10}%
+  }%
+}
+\newcommand*{\EndNoToc}{%
+  \addtocontents{toc}{%
+    \protect\setcounter{tocdepth}{\protect\SavedTocDepth}%
+  }%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\input{title}
+
+\input{abstract}
+
+%% toc %%%%%%
+\cleardoublepage
+\pagenumbering{roman}
+
+\titleformat{name=\chapter}[block]{\centering\normalfont\bfseries\huge}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{Table of Contents}}}
+\tableofcontents
+
+\pagestyle{plain}
+\newpage
+\titleformat{name=\chapter}[block]{\centering\normalfont\bfseries\huge}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{Figures}}}
+
+%\setlength{\baselineskip}{18pt}  %% Espacio interlinea
+\setlength{\parskip}{6pt plus 1pt minus 1pt} %% Espacio interparrafo
+
+\BeginNoToc
+
+\listoffigures
+\pagestyle{plain}
+\newpage
+\titleformat{name=\chapter}[block]{\centering\normalfont\bfseries\huge}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{Tables}}}
+\listoftables
+
+\EndNoToc
+
+\pagestyle{plain}
+\newpage
+
+\titleformat{name=\chapter}[block]{\normalfont\bfseries\huge}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{\centering Acknowledgements}}}
+
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\chapter*{Acknowledgements}
+
+Me gustaría agradecer este trabajo a mi tutor, Carlos Roberto, por ayudarme y estar siempre pendiente, aconsejarme y guiarme en todo, siendo un tutor inmejorable.
+
+A mi familia por apoyarme, cuidarme y todo lo que hacen por mi. Si no tuviera la mejor madre del mundo no sé de donde hubiera sacado el tiempo para hacer este máster.
+
+A Julia, Pau y Marta por ser mi inspiración, cada una a su forma. La mejor compi de carrera, máster y festivales, la persona más trabajadora y alegre, qué suerte tenemos todos los que estamos a tu alrededor. La que empezó siendo mi compañera de prácticas en la carrera y ahora va a ser Doctora, una de las personas más listas que conozco (te echamos de menos).  Y la que nos ha demostrado que es capaz de todo lo que se proponga a pesar de las dificultades, nos has enseñado mucho a las tres. Mis mujeres ingenieras, qué orgullosa estoy de vosotras.
+
+A Sara y Adri, que aunque no tienen nada que ver con este trabajo me alegran la vida. (Que no tot en la vida es faena!)
+
+Y por último a Jorge, el mejor compañero. Por cuidarme, apoyarme y hacerlo todo siempre con tanto amor. Me has ayudado fleje, gracias.
+
+\pagestyle{fancy}
+\fancyhead{}
+\lhead{\includegraphics[width=2.5cm]{etsit_white.png}}
+\rhead{\thepage}
+\cfoot{}
+%%% Chapter/Section/ Subsection formatting
+\titleformat{name=\chapter}[block]{\normalfont\bfseries\huge}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-1\fboxsep}{\centering Chapter \thechapter:\\~#1}}}
+%\titleformat{name=\section}[block]{\bfseries \large}{}{0pt}
+%  {\colorbox{orange!60}{\parbox{\dimexpr\textwidth-2\fboxsep}{\strut\thesection~#1\strut}}}
+%\titleformat{name=\subsection}[block]{\bfseries \normalsize}{}{0pt}
+%  {\colorbox{orange!60}{\parbox{\dimexpr\textwidth-2\fboxsep}{\strut\thesubsection~#1\strut}}}
+%%%%%%%%%%%%%%%%%%
+\titleformat{\section}
+{\color{orange!99}\normalfont\Large\bfseries}{}{1em}{\strut\thesection~#1\strut}
+
+\titleformat{\subsection}
+{\color{orange!99}\normalfont\Large\bfseries}{}{1em}{\strut\thesubsection~#1\strut}
+
+
+\chapter{Introduction}
+\pagenumbering{arabic} 
+\input{Chapters/introduction}
+
+\chapter{State of the Art}
+\input{Chapters/chapter01}
+
+\chapter{Dataset}
+\input{Chapters/chapter02}
+
+\chapter{Damage classification system for Wind Turbine Blades using a Siamese Neural Network architecture}
+\input{Chapters/chapter03}
+
+\chapter{Experiments and Results}
+\input{Chapters/chapter04}
+
+\chapter{General Conclusions and Future Lines}
+\input{Chapters/conclusion}
+
+\titleformat{name=\chapter}[block]{\normalfont\bfseries\huge}{}{}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-2\fboxsep}{\centering Bibliography}}}
+\addcontentsline{toc}{chapter}{Bibliography}
+\printbibliography
+
+\titleformat{name=\chapter}[block]{\normalfont\bfseries\huge}{}{0pt}
+  {\colorbox{orange!90}{\parbox{\dimexpr\textwidth-1\fboxsep}{\centering ANNEX \thechapter:\\~#1}}}
+
+\appendix
+\chapter{Ethics, Economy, Social and Environment}
+\input{Chapters/annexA}
+\chapter{Financial Budget}
+\input{Chapters/annexB}
+
+\end{document}
